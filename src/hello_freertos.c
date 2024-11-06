@@ -17,8 +17,9 @@ int count = 0;
 bool on = false;
 SemaphoreHandle_t semaphore;
 
-#define MAIN_TASK_PRIORITY (tskIDLE_PRIORITY + 3UL)
-#define HIGH_PRIORITY_TASK_PRIORITY (tskIDLE_PRIORITY + 2UL)
+#define MAIN_TASK_PRIORITY (tskIDLE_PRIORITY + 4UL)
+#define HIGH_PRIORITY_TASK_PRIORITY (tskIDLE_PRIORITY + 3UL)
+#define MEDIUM_PRIORITY_TASK_PRIORITY (tskIDLE_PRIORITY + 2UL)
 #define LOW_PRIORITY_TASK_PRIORITY (tskIDLE_PRIORITY + 1UL)
 #define MAIN_TASK_STACK_SIZE configMINIMAL_STACK_SIZE
 #define PRIORITY_TASK_STACK_SIZE configMINIMAL_STACK_SIZE
@@ -30,21 +31,29 @@ void high_priority_task(__unused void *params)
   */
   printf("High priority task attempting to take the semaphore.\n");
 
-  if (xSemaphoreTake(semaphore, (TickType_t)10) == pdTRUE)
+  if (xSemaphoreTake(semaphore, (TickType_t)10000) == pdTRUE)
   {
     printf("High priority task was able to obtain the semaphore.\n");
 
     xSemaphoreGive(semaphore);
+    printf("High priority work done and semaphore was released.\n");
   }
   else
   {
     printf("High priority unable to take semaphore.\n");
   }
-  printf("High priority work done and semaphore was released.\n");
 
   while (1)
   {
     vTaskDelay(1 / portTICK_PERIOD_MS);
+  }
+}
+
+void medium_priority_task(__unused void *params)
+{
+  printf("Medium priority task attempting to starve system.\n");
+  while (1)
+  {
   }
 }
 
@@ -60,6 +69,7 @@ void low_priority_task(__unused void *params)
     printf("Low priority task was able to obtain the semaphore.\n");
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     xSemaphoreGive(semaphore);
+    printf("Low priority work done and semaphore was released.\n");
   }
   else
   {
@@ -67,7 +77,6 @@ void low_priority_task(__unused void *params)
         the shared resource safely. */
     printf("Low priority unable to take semaphore.\n");
   }
-  printf("Low priority work done and semaphore was released.\n");
 
   while (1)
   {
@@ -79,9 +88,13 @@ void supervisor_task(__unused void *params)
 {
   // Create low priority task
   xTaskCreate(low_priority_task, "low_priority_thread",
-              PRIORITY_TASK_STACK_SIZE, NULL, LOW_PRIORITY_TASK_PRIORITY, NULL);
+              PRIORITY_TASK_STACK_SIZE, NULL, LOW_PRIORITY_TASK_PRIORITY, NULL);  
 
   vTaskDelay(500 / portTICK_PERIOD_MS);
+
+  xTaskCreate(medium_priority_task, "medium_priority_thread",
+              PRIORITY_TASK_STACK_SIZE, NULL, MEDIUM_PRIORITY_TASK_PRIORITY, NULL);
+  
   // Create high priority task
   xTaskCreate(high_priority_task, "high_priority_thread",
               PRIORITY_TASK_STACK_SIZE, NULL, HIGH_PRIORITY_TASK_PRIORITY, NULL);
@@ -97,7 +110,8 @@ int main(void)
   stdio_init_all();
   sleep_ms(5000); // Give time for TTY to attach.
 
-  semaphore = xSemaphoreCreateCounting(1, 1);
+  semaphore = xSemaphoreCreateMutex();
+  
   if (!semaphore)
   {
     printf("Error creating semaphore. %s\n.", semaphore);
