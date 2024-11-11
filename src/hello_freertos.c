@@ -101,7 +101,7 @@ void supervisor_task(__unused void *params)
 
   while (1)
   {
-    vTaskDelay(1 / portTICK_PERIOD_MS);
+    taskYIELD();
   }
 }
 

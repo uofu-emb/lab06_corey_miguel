@@ -87,6 +87,20 @@ Write tests for two threads running the following scenarios. Try to predict the 
         1. Lower priority starts first.
     1. Both run `busy_yield`.
 
+#### Predictions
+
+| Same Priority               |     |     |
+|                             | T1  | T2  |
+| Both busy_busy              | 50% | 50% |
+| Both busy_yield             | 50% | 50% |
+| T1 busy_busy, T2 busy_yield | 99% | 1%  |
+
+| Different Priority           |      |     |
+|                              | T1   | T2  |
+| Higher priority starts first | 100% | 0%  |
+| Lower priority starts first  | 99%  | 1%  |
+| Both busy_yield              | 100% | 1%  |
+
 Make sure you are setting priorities according to the priority order presented in the documentation.
 
 # Reference implementation
