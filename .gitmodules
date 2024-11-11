@@ -17,3 +17,9 @@
 [submodule "lib/unity"]
 	path = lib/unity
 	url = https://github.com/ThrowTheSwitch/Unity.git
+[submodule "libs/Adafruit_GFX_Library"]
+	path = libs/Adafruit_GFX_Library
+	url = https://github.com/adafruit/Adafruit-GFX-Library.git
+[submodule "libs/Adafruit_SSD1306"]
+	path = libs/Adafruit_SSD1306
+	url = https://github.com/adafruit/Adafruit_SSD1306.git

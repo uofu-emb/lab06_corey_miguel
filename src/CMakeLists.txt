@@ -32,3 +32,16 @@ endif()
 pico_add_extra_outputs(hello_freertos)
 
 add_custom_target(flash picotool load -f $<TARGET_FILE:hello_freertos> DEPENDS hello_freertos)
+
+
+add_executable(ssd1306_i2c ssd1306_i2c.c)
+add_executable(screentest screentest.c)
+
+# pull in common dependencies and additional i2c hardware support
+target_link_libraries(ssd1306_i2c pico_stdlib hardware_i2c)
+target_link_libraries(screentest pico_stdlib hardware_i2c)
+
+# create map/bin/hex file etc.
+pico_add_extra_outputs(ssd1306_i2c)
+pico_add_extra_outputs(screentest)
+
