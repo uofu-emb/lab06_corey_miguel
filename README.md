@@ -98,8 +98,8 @@ Write tests for two threads running the following scenarios. Try to predict the 
 | Different Priority           |      |     |
 |                              | T1   | T2  |
 | Higher priority starts first | 100% | 0%  |
-| Lower priority starts first  | 99%  | 1%  |
-| Both busy_yield              | 100% | 1%  |
+| Lower priority starts first  | 1%   | 99% |
+| Both busy_yield              | 100% | 0%  |
 
 Make sure you are setting priorities according to the priority order presented in the documentation.
 
