@@ -52,6 +52,10 @@ Induce priority inversion.
 1. have the lower priority thread acquire the semphore first.
 1. Predict the behavior of the system.
 
+#### Behavior:
+Supervisor thread will start up the two task of low and high priority. This then delays the startup for the high priority while we give the semaphore to the low priority task. Then the tasks will start, Low priority task takes the semaphore and then the high priorty task will wait to get the semaphore. once each has had the semaphore once, they print the status to the monitor. 
+
+
 You may find it useful to create a helper function to setup and teardown the threads.
 
 ### Activity 1
@@ -82,6 +86,20 @@ Write tests for two threads running the following scenarios. Try to predict the 
         1. Higher priority starts first.
         1. Lower priority starts first.
     1. Both run `busy_yield`.
+
+#### Predictions
+
+| Same Priority               |     |     |
+|                             | T1  | T2  |
+| Both busy_busy              | 50% | 50% |
+| Both busy_yield             | 50% | 50% |
+| T1 busy_busy, T2 busy_yield | 99% | 1%  |
+
+| Different Priority           |      |     |
+|                              | T1   | T2  |
+| Higher priority starts first | 100% | 0%  |
+| Lower priority starts first  | 1%   | 99% |
+| Both busy_yield              | 100% | 0%  |
 
 Make sure you are setting priorities according to the priority order presented in the documentation.
 
